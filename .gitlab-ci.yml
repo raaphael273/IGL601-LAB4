@@ -1,0 +1,18 @@
+# on utilise docker comme executeur
+image: docker:latest
+# on utilise le service docker in docker pour permettre de rouler une inception.
+# Ca fait qu'on ne roule pas les images directement sur le docker du host mais
+# Dans une machine virtuelle docker.
+services:
+  - docker:dind
+
+# Il faut declarer un stage pour le build et un pour les tests
+stages:
+
+# Stage de build
+build:
+
+# Stage de test
+# use artifacts from build stage
+test:
+

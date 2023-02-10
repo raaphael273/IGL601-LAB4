@@ -1,0 +1,14 @@
+GET http://localhost:8080/publications
+Accept: application/json
+
+
+###
+POST http://localhost:8080/publications
+Content-Type: application/json
+Accept: application/json
+
+{
+  "title": "This is my publication",
+  "content": "This is my publication's content",
+  "createdBy": "92817ad9-c34d-4b56-8b61-58d2ff8cb5e6"
+}
