@@ -6,13 +6,31 @@ image: docker:latest
 services:
   - docker:dind
 
+variables:
+  DOCKER_USERNAME: $DOCKER_USERNAME
+  DOCKER_PASSWORD: $DOCKER_PASSWORD
+
+
+
 # Il faut declarer un stage pour le build et un pour les tests
 stages:
-
+  - build
+  - test
 # Stage de build
 build:
-
+  script:
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - ./gradlew build
+  artifacts:
+      paths:
+        - build/
+        - gradlew
 # Stage de test
 # use artifacts from build stage
 test:
+  script:
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - docker run -v $(pwd):/app amazoncorretto:17.0.6 bash -c "cd app && ./gradlew test"
+  only:
+    - master
 

@@ -13,6 +13,8 @@ import java.util.UUID;
 
 import static java.util.UUID.fromString;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
@@ -43,16 +45,43 @@ class PublicationServiceTest {
 
         @Test
         void GIVEN__a_publication_with_an_id__WHEN__create__THEN__a_new_id_replaces_the_given_id() {
+                final Publication publication = new Publication();
 
+                publication.setId(UUID);
+                publication.setTitle("title");
+                publication.setContent("content");
+
+                assertThat(publicationService.create(publication))
+                        .extracting(Publication::getId)
+                        .isNotEqualTo(UUID);
         }
 
         @Test
         void GIVEN__a_publication_with_an_author__WHEN__create__THEN__the_author_did_not_change() {
+            final Publication publication = new Publication();
 
+            publication.setId(UUID);
+            publication.setTitle("title");
+            publication.setContent("content");
+            publication.setCreatedBy(ANONYMOUS_USER_ID);
+
+            assertThat(publicationService.create(publication))
+                    .extracting(Publication::getCreatedBy)
+                    .isEqualTo(ANONYMOUS_USER_ID);
         }
 
         @Test
         void GIVEN__a_publication_without_an_author__WHEN__create__THEN__the_author_is_anonymous() {
+            final Publication publication = new Publication();
+
+            publication.setId(UUID);
+            publication.setTitle("title");
+            publication.setContent("content");
+
+            assertThat(publicationService.create(publication))
+                    .extracting(Publication::getCreatedBy)
+                    .isNotNull();
+
         }
 
         private Condition<Instant> between(
@@ -63,19 +92,38 @@ class PublicationServiceTest {
 
         @Test
         void GIVEN__a_publication__WHEN__create__THEN__the_creation_date_is_set() {
- 
- 
+            final Publication publication = new Publication();
+
+            publication.setId(UUID);
+            publication.setTitle("title");
+            publication.setContent("content");
+
+            assertThat(publicationService.create(publication))
+                    .extracting(Publication::getCreatedOn)
+                    .isNotNull();
         }
 
         @Test
         void GIVEN__a_publication_without_title__WHEN__create__THEN__throws_IllegalArgumentException() {
- 
- 
+
+            final Publication publication = new Publication();
+
+            publication.setId(UUID);
+            publication.setContent("content");
+
+            assertThatThrownBy( () -> publicationService.create(publication)).isInstanceOf(IllegalArgumentException.class);
+
         }
 
         @Test
         void GIVEN__a_publication_without_content__WHEN__create__THEN__throws_IllegalArgumentException() {
- 
+            final Publication publication = new Publication();
+
+            publication.setId(UUID);
+            publication.setTitle("title");
+
+
+            assertThatThrownBy( () -> publicationService.create(publication)).isInstanceOf(IllegalArgumentException.class);
  
         }
     }
